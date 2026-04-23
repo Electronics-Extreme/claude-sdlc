@@ -1,0 +1,34 @@
+# schemas/task-types.schema.yaml
+# Formal schema for config/task-types.yaml.
+#
+# Used by `scripts/check_task_types.py` in CI.
+
+$schema: "https://json-schema.org/draft-07/schema#"
+$id: "https://claude-sdlc.local/schemas/task-types-v1.yaml"
+title: "Task-type registry"
+type: object
+required: [version, task_types]
+additionalProperties: false
+
+properties:
+  version:
+    type: integer
+    const: 1
+
+  task_types:
+    type: object
+    minProperties: 1
+    patternProperties:
+      "^phase-[1-6]-[a-z-]+$":
+        type: object
+        required: [purpose, phase]
+        additionalProperties: false
+        properties:
+          purpose:
+            type: string
+            minLength: 20
+            maxLength: 400
+          phase:
+            type: string
+            pattern: "^0[1-6]$"
+    additionalProperties: false

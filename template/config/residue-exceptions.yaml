@@ -1,0 +1,33 @@
+# config/residue-exceptions.yaml
+# Allowlist for `scripts/check_residue.py`.
+#
+# Some legitimate content triggers the placeholder detector (e.g. CHANGELOG.md
+# mentions historical TODOs; this file itself names the patterns). Each entry
+# MUST be explicit — (file, line, token) tuple. Wildcards not accepted; every
+# exception reviewed per-line.
+
+version: 1
+
+# Patterns the residue guard detects (reference for humans; the actual patterns
+# are hard-coded in check_residue.py).
+detected_patterns:
+  - "{{...}} / {{PLACEHOLDER}}"
+  - "TODO (case-sensitive, with or without trailing colon)"
+  - "FIXME"
+  - "XXX"
+  - "<TBD> / [TBD] / (TBD)"
+  - "[to-be-filled] / [replace me] / [PLACEHOLDER]"
+  - "line containing only three dots"
+
+# Per-file exception list. Each: file path, token, justification.
+# Add entries here for legitimate false-positives in your own signed docs.
+exceptions:
+  # Example — uncomment and adapt to your project:
+  #
+  # - file: docs/architecture.md
+  #   token: "TODO"
+  #   reason: "Historical TODO reference in a past-tense paragraph; kept for context"
+
+# Note: template/ files default to `status: template` in their frontmatter
+# and are SKIPPED by the residue guard. Only `status: signed` files are
+# checked, so {{PLACEHOLDER}} markers in template/ scaffolds are fine.

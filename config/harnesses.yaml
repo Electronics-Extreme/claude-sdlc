@@ -1,0 +1,105 @@
+# config/harnesses.yaml
+# CANONICAL harness inventory per Core rule 8.
+#
+# Every reference to a harness anywhere in the repo (docs/INSTALL.*.md,
+# tools/sdlc-metrics/adapters/, hooks/session_start.py, sync_wrappers.py) MUST
+# match an entry here.
+#
+
+version: 1
+
+# Hook layers:
+#   1         = bash/Python hook script invoked by harness at session start
+#   1-js      = JavaScript plugin module invoked by harness via plugin API
+#   2         = file-based context (AGENTS.md / GEMINI.md) — no hook API
+
+harnesses:
+  claude-code:
+    layer: 1
+    surfaces: [cli, vscode-extension, cursor-extension, jetbrains-plugin, claude-ai-web]
+    hook_mechanism: ".claude/settings.json SessionStart hook"
+    hook_config_file: ".claude/settings.json"
+    json_shape: "hookSpecificOutput.additionalContext"
+    env_detect: ["CLAUDE_PLUGIN_ROOT"]
+    api_stability: "documented-stable"
+    docs_url: "https://code.claude.com/docs/en/hooks"
+    notes: "Single .claude/settings.json reaches CLI + VS Code extension + Cursor extension + JetBrains + claude.ai/code web (repo-level hooks are part of the cloud session clone)."
+
+  cursor-agent:
+    layer: 1
+    surfaces: [cursor-agent]
+    hook_mechanism: ".cursor-plugin/plugin.json with hooks section"
+    hook_config_file: ".cursor-plugin/plugin.json"
+    hook_subfile: ".cursor-plugin/hooks/hooks-cursor.json"
+    json_shape: "additional_context"
+    env_detect: ["CURSOR_PLUGIN_ROOT"]
+    api_stability: "field-tested"
+    notes: "Cursor Agent ≠ Claude Code in Cursor. They are separate products. This entry targets Cursor's native AI."
+
+  copilot-cli:
+    layer: 1
+    surfaces: [github-copilot-cli]
+    hook_mechanism: ".claude-plugin/plugin.json + COPILOT_CLI env var"
+    hook_config_file: ".claude-plugin/plugin.json"
+    json_shape: "additionalContext"
+    env_detect: ["COPILOT_CLI"]
+    api_stability: "field-tested"
+    notes: "Reuses Claude Code plugin manifest (convergence pattern); COPILOT_CLI env distinguishes at runtime."
+
+  codex-cli:
+    layer: 2
+    surfaces: [openai-codex-cli, openai-codex-app]
+    hook_mechanism: "native skill discovery — no hook"
+    layer2_files: ["AGENTS.md"]
+    install_mechanism: "symlink skills/ into ~/.agents/skills/ (junction on Windows)"
+    api_stability: "field-tested"
+    notes: "Codex scans ~/.agents/skills/ at startup; SKILL.md frontmatter description triggers auto-activation."
+
+  gemini-cli:
+    layer: 2
+    surfaces: [google-gemini-cli]
+    hook_mechanism: "gemini-extension.json contextFileName — no hook"
+    hook_config_file: "gemini-extension.json"
+    layer2_files: ["GEMINI.md"]
+    install_mechanism: "gemini extensions install <path>"
+    api_stability: "documented-stable"
+    notes: "Extension declares contextFileName; Gemini loads at activation."
+
+  opencode:
+    layer: "1-js"
+    surfaces: [opencode-cli]
+    hook_mechanism: "JavaScript plugin — experimental.chat.messages.transform"
+    plugin_path: ".opencode/plugins/sdlc-contract-loader.js"
+    install_mechanism: "opencode.json plugin array"
+    api_stability: "experimental"
+    stability_risk: "experimental.chat.messages.transform is NOT in OpenCode's documented stable hook list. Monitor for deprecation; fallback plan: session.created + tui.prompt.append combination."
+    notes: "Plugin is a Node.js/ESM module, not a bash/Python script. Separate subsystem from Layer-1 harnesses."
+
+  # Layer-2-only harnesses without dedicated adapter files (generic AGENTS.md readers)
+  aider:
+    layer: 2
+    surfaces: [aider-cli]
+    layer2_files: ["AGENTS.md", "CONVENTIONS.md"]
+    install_mechanism: "AGENTS.md auto-discovered; optional .aider.conf.yml"
+    api_stability: "best-effort"
+    notes: "Aider reads conventional files; no dedicated plugin API. Contract load depends on Aider's own context handling."
+
+  continue-dev:
+    layer: 2
+    surfaces: [continue-vscode, continue-jetbrains]
+    layer2_files: ["AGENTS.md", ".continuerules"]
+    install_mechanism: "AGENTS.md auto-discovered"
+    api_stability: "best-effort"
+    notes: "Continue.dev has project rules but no session-start hook surface we can target uniformly."
+
+  codeium:
+    layer: 2
+    surfaces: [codeium-ide]
+    layer2_files: ["AGENTS.md", ".codeium/instructions.md"]
+    api_stability: "best-effort"
+
+  amazon-q:
+    layer: 2
+    surfaces: [amazon-q-developer]
+    layer2_files: ["AGENTS.md", ".amazonq/rules/*.md"]
+    api_stability: "best-effort"

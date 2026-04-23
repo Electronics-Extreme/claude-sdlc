@@ -1,0 +1,13 @@
+{
+  "name": "sdlc-strict-waterfall",
+  "description": "Strict waterfall SDLC methodology — doc-first, TDD inside slices, two-pass reconciliation gate, CR-driven changes. Serves Claude Code and GitHub Copilot CLI (via COPILOT_CLI env).",
+  "version": "2.0.0",
+  "author": {
+    "name": "AI Project Setup"
+  },
+  "homepage": "https://github.com/Electronics-Extreme/claude-sdlc",
+  "repository": "https://github.com/Electronics-Extreme/claude-sdlc",
+  "license": "MIT",
+  "keywords": ["sdlc", "waterfall", "tdd", "doc-first", "reconciliation"],
+  "hooks": "./hooks/hooks.json"
+}

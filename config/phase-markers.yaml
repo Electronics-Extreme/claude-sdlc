@@ -1,0 +1,47 @@
+# config/phase-markers.yaml
+# How `tools/sdlc-metrics/phases.py` detects which SDLC phase a session belongs
+# to. Ordered fallback — first match wins.
+#
+
+version: 1
+
+strategies:
+  - name: env_var
+    priority: 1
+    description: "Agent-side env var captured in transcript metadata."
+    env_var: SDLC_PHASE
+    pattern: "^0?[1-6]$"   # accepts "01", "1", "02", "2", etc.
+
+  - name: prompt_marker
+    priority: 2
+    description: "Explicit marker in any user message in the first N turns."
+    regex: '(?i)\[phase[- ]?(\d)\]|^/sdlc\s+phase\s+(\d)'
+    first_n_turns: 5
+
+  - name: branch_prefix
+    priority: 3
+    description: "Git branch name prefix — requires adapter to provide branch."
+    branches:
+      feat/p1/:  "01"
+      feat/p2/:  "02"
+      feat/p3/:  "03"
+      feat/p4/:  "04"
+      feat/p5/:  "05"
+      feat/p6/:  "06"
+      fix/p3/:   "03"
+      fix/p4/:   "04"
+      hotfix/:   "06"
+      cr/:       "06"
+
+  - name: commit_prefix
+    priority: 4
+    description: "Most recent commit message starts with SDLC-P<n>:"
+    regex: '(?m)^SDLC-P([1-6])[:\s]'
+
+  - name: fallback
+    priority: 5
+    description: "No phase inferrable — tagged as 'unknown', warning emitted."
+    value: unknown
+
+# Task-type canonical inventory lives in config/task-types.yaml
+# (cross-referenced per Core rule 8).

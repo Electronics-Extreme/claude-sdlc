@@ -1,0 +1,196 @@
+# config/residue-exceptions.yaml
+# Allowlist for `scripts/check_residue.py`.
+#
+# Some legitimate content triggers the placeholder detector (e.g. CHANGELOG.md
+# mentions historical TODOs; this file itself names the patterns). Each entry
+# MUST be explicit — (file, line, token) tuple. Wildcards not accepted; every
+# exception reviewed per-line.
+#
+
+version: 1
+
+# Patterns the residue guard detects (reference for humans; the actual patterns
+# are hard-coded in check_residue.py).
+detected_patterns:
+  - "{{...}} / {{PLACEHOLDER}}"
+  - "TODO (case-sensitive, with or without trailing colon)"
+  - "FIXME"
+  - "XXX"
+  - "<TBD> / [TBD] / (TBD)"
+  - "[to-be-filled] / [replace me] / [PLACEHOLDER]"
+  - "line containing only three dots"
+
+# Per-file exception list. Each: file path, approx line (int or range), token,
+# and justification. `check_residue.py` loads and skips these.
+exceptions:
+  - file: CHANGELOG.md
+    token: "TODO"
+    reason: "Keep-a-Changelog format may legitimately describe historical TODOs in past releases"
+
+  - file: NOTICE.md
+    token: "TODO"
+    reason: "Example attribution header shown as reference includes the literal string"
+
+  - file: config/residue-exceptions.yaml
+    token: "{{...}}"
+    reason: "This file references detected patterns — self-referential allowlist"
+  - file: config/residue-exceptions.yaml
+    token: "TODO"
+    reason: "Same as above"
+  - file: config/residue-exceptions.yaml
+    token: "FIXME"
+    reason: "Same"
+  - file: config/residue-exceptions.yaml
+    token: "XXX"
+    reason: "Same"
+  - file: config/residue-exceptions.yaml
+    token: "<TBD>"
+    reason: "Same"
+  - file: config/residue-exceptions.yaml
+    token: "[to-be-filled]"
+    reason: "Same"
+
+  - file: skill/SKILL.md
+    token: "{{...}}"
+    reason: "SKILL.md documents the template placeholder convention in its Anti-patterns section"
+
+  - file: scripts/check_residue.py
+    token: "TODO"
+    reason: "The detector source code literally contains the token strings it detects"
+  - file: scripts/check_residue.py
+    token: "FIXME"
+    reason: "Same"
+  - file: scripts/check_residue.py
+    token: "XXX"
+    reason: "Same"
+
+  - file: docs/sdlc/06_maintenance/change_requests.md
+    token: "{{...}}"
+    reason: "Template block at top shows the CR entry form; placeholders are part of the template definition"
+
+  # skill/reconciliation.md describes the residue guard patterns in its self-review section
+  - file: skill/reconciliation.md
+    token: "{{...}}"
+    reason: "Self-review section names the patterns the residue guard detects"
+  - file: skill/reconciliation.md
+    token: "TODO"
+    reason: "Same"
+  - file: skill/reconciliation.md
+    token: "FIXME"
+    reason: "Same"
+  - file: skill/reconciliation.md
+    token: "XXX"
+    reason: "Same"
+  - file: skill/reconciliation.md
+    token: "<TBD>"
+    reason: "Same"
+  - file: skill/reconciliation.md
+    token: "[to-be-filled]"
+    reason: "Same"
+
+  # Phase-doc files that are "amended" (real content added at bottom) but retain
+  # template-shaped scaffold placeholders in their original (upstream-templated)
+  # sections. These are ADOPTER-facing instructional placeholders.
+  - file: docs/sdlc/04_testing/test_cases.md
+    token: "{{...}}"
+    reason: "Original template scaffold with {{PLACEHOLDER}} examples; adopter replaces on first use"
+  - file: skill/traceability-matrix.md
+    token: "TODO"
+    reason: "Uses the literal word TODO to illustrate matrix-row state (empty Code column → TODO)"
+
+  - file: docs/sdlc/03_implementation/module_breakdown.md
+    token: "{{...}}"
+    reason: "Original Module Contract template block; {{PLACEHOLDER}} examples for adopter"
+  - file: docs/sdlc/03_implementation/module_breakdown.md
+    token: "TODO"
+    reason: "Describes residue guard in Post-v2.0.0 section — literal pattern name"
+  - file: docs/sdlc/03_implementation/module_breakdown.md
+    token: "FIXME"
+    reason: "Same"
+
+  # Phase-doc files that are adopter scaffolds with Post-v2.0.0 kit-specific
+  # amendments. The original scaffold sections retain {{PLACEHOLDER}} markers
+  # for adopters to fill when they bootstrap from template/. The kit's own
+  # content lives in the Post-v2.0.0 section and is residue-free.
+  - file: docs/sdlc/02_design/trade_offs.md
+    token: "{{...}}"
+    reason: "Adopter-facing scaffold template block; Post-v2.0.0 section is residue-free"
+  - file: docs/sdlc/02_design/architecture.md
+    token: "{{...}}"
+    reason: "Adopter-facing scaffold"
+  - file: docs/sdlc/01_requirement/functional_requirements.md
+    token: "{{...}}"
+    reason: "Adopter-facing scaffold; FR-001..003 are example placeholders"
+  - file: docs/sdlc/01_requirement/use_cases.md
+    token: "{{...}}"
+    reason: "Adopter-facing UC-001 template"
+  - file: docs/sdlc/01_requirement/non_functional_requirements.md
+    token: "{{...}}"
+    reason: "Adopter-facing NFR-CMP-01 placeholder"
+  - file: docs/sdlc/01_requirement/acceptance_criteria.md
+    token: "{{...}}"
+    reason: "Adopter-facing FR-001 example"
+  - file: docs/sdlc/01_requirement/non_functional_requirements.md
+    token: "TODO"
+    reason: "NFR-DOC-HYGIENE-1 describes the residue guard's pattern list"
+  - file: docs/sdlc/01_requirement/non_functional_requirements.md
+    token: "FIXME"
+    reason: "Same"
+  - file: docs/sdlc/01_requirement/non_functional_requirements.md
+    token: "XXX"
+    reason: "Same"
+  - file: docs/sdlc/01_requirement/non_functional_requirements.md
+    token: "<TBD>"
+    reason: "Same"
+  - file: docs/sdlc/01_requirement/non_functional_requirements.md
+    token: "[to-be-filled]"
+    reason: "Same"
+
+  - file: skill/workflows/phase3-implementation.md
+    token: "{{...}}"
+    reason: "Self-review section names the residue guard's pattern list"
+  - file: skill/workflows/phase3-implementation.md
+    token: "TODO"
+    reason: "Same"
+  - file: skill/workflows/phase3-implementation.md
+    token: "FIXME"
+    reason: "Same"
+  - file: skill/workflows/phase3-implementation.md
+    token: "XXX"
+    reason: "Same"
+  - file: skill/workflows/phase3-implementation.md
+    token: "<TBD>"
+    reason: "Same"
+  - file: skill/workflows/phase3-implementation.md
+    token: "[to-be-filled]"
+    reason: "Same"
+
+  - file: template/docs/sdlc/06_maintenance/change_requests.md
+    token: "{{short title}}"
+    reason: "Example row IS placeholder — that's the point"
+  - file: template/docs/sdlc/06_maintenance/change_requests.md
+    token: "{{class}}"
+    reason: "Same"
+  - file: template/docs/sdlc/06_maintenance/change_requests.md
+    token: "{{status}}"
+    reason: "Same"
+  - file: template/docs/sdlc/06_maintenance/change_requests.md
+    token: "{{YYYY-MM-DD}}"
+    reason: "Same"
+
+  - file: docs/adapters.md
+    token: "bare-ellipsis"
+    reason: "Python adapter interface examples use ... to indicate method bodies to fill in"
+
+  - file: docs/INSTALL.claude-code.md
+    token: "{{...}}"
+    reason: "Instructs users to fill in CLAUDE.md placeholders — literal reference"
+
+  - file: docs/INSTALL.npm.md
+    token: "{{...}}"
+    reason: "Instructs users to fill in CLAUDE.md placeholders — literal reference"
+
+# template/ is a scaffold tree. It's fine for template/ files to have
+# {{PLACEHOLDER}} content — that's their purpose. The residue guard uses
+# frontmatter `status` to determine scope: only `status: signed` files are
+# checked. Template files default to `status: template` and are skipped.

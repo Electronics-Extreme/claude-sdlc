@@ -1,0 +1,96 @@
+name: SDLC tests
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+jobs:
+  verify:
+    name: Verify (${{ matrix.os }} · Python ${{ matrix.python }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04, macos-14, windows-2022]
+        python: ["3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Python version sanity
+        shell: bash
+        run: python3 scripts/_python_check.py && echo "✓ Python ≥ 3.11"
+
+      - name: Validate frontmatter schema
+        shell: bash
+        run: python3 scripts/check_frontmatter.py
+
+      - name: Enforce residue guard
+        shell: bash
+        run: python3 scripts/check_residue.py
+
+      - name: Validate task-types registry
+        shell: bash
+        run: python3 scripts/check_task_types.py
+
+      - name: Verify SHA pins
+        shell: bash
+        run: python3 scripts/update_contract_sha.py --check
+
+      - name: Regenerate wrappers (check only)
+        shell: bash
+        run: python3 scripts/sync_wrappers.py --check
+
+      - name: Smoke-test metrics CLI — list adapters
+        shell: bash
+        run: python3 tools/sdlc_metrics/analyze.py adapters
+
+      - name: Smoke-test metrics CLI — analyze fixture
+        shell: bash
+        run: python3 tools/sdlc_metrics/analyze.py analyze tools/sdlc_metrics/tests/fixtures/sample-phase3.jsonl --format json
+
+      - name: Smoke-test metrics CLI — budget-check passes
+        shell: bash
+        run: python3 tools/sdlc_metrics/analyze.py budget-check tools/sdlc_metrics/tests/fixtures/sample-phase3.jsonl --format text
+
+      - name: Smoke-test metrics CLI — secrets detection rejects tampered transcript
+        shell: bash
+        run: |
+          if python3 tools/sdlc_metrics/analyze.py analyze tools/sdlc_metrics/tests/fixtures/sample-with-secret.jsonl; then
+            echo "FAIL: secrets-containing transcript should have been rejected"
+            exit 1
+          else
+            echo "✓ secrets detection rejected transcript (as expected)"
+          fi
+
+      - name: Smoke-test hook script — dry-run
+        shell: bash
+        run: python3 hooks/session_start.py --dry-run
+
+      - name: Smoke-test hook script — integrity check
+        shell: bash
+        run: python3 hooks/session_start.py --check-integrity
+
+      - name: LF line-ending check
+        shell: bash
+        if: matrix.os != 'windows-2022'
+        run: |
+          # Scan text files for CRLF (excluded on Windows since checkout may normalize)
+          bad=0
+          while IFS= read -r f; do
+            case "$f" in
+              *.py|*.sh|*.md|*.yaml|*.yml|*.json|*.toml|*.mdc|*.mmd|*.dot|*.sha256|*.txt)
+                if grep -I -l -e $'\r$' "$f" > /dev/null 2>&1; then
+                  echo "CRLF found in $f"
+                  bad=1
+                fi
+                ;;
+            esac
+          done < <(git ls-files)
+          exit $bad

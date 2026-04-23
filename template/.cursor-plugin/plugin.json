@@ -1,0 +1,14 @@
+{
+  "name": "sdlc-strict-waterfall",
+  "displayName": "SDLC Strict Waterfall",
+  "description": "Strict waterfall SDLC methodology — doc-first, TDD inside slices, two-pass reconciliation gate, CR-driven changes",
+  "version": "2.0.0",
+  "author": {
+    "name": "AI Project Setup"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/Electronics-Extreme/claude-sdlc",
+  "repository": "https://github.com/Electronics-Extreme/claude-sdlc",
+  "keywords": ["sdlc", "waterfall", "tdd", "doc-first", "reconciliation"],
+  "hooks": "./hooks/hooks-cursor.json"
+}

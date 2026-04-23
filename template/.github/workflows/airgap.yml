@@ -1,0 +1,46 @@
+name: Airgap — no outbound network
+
+# Per NFR-PRIVACY-AIRGAP-1:
+# Every script must run with full functionality when networking is disabled.
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+  schedule:
+    - cron: "0 4 * * 1"   # weekly Monday 04:00 UTC
+
+jobs:
+  airgap:
+    name: No outbound network
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Block outbound network (except loopback)
+        run: |
+          # Allow loopback only; block all other outbound traffic for the remainder of the job
+          sudo iptables -A OUTPUT -o lo -j ACCEPT
+          sudo iptables -A OUTPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+          sudo iptables -A OUTPUT -p tcp -d 127.0.0.0/8 -j ACCEPT
+          sudo iptables -A OUTPUT -p tcp -j REJECT --reject-with tcp-reset
+          sudo iptables -A OUTPUT -p udp -j REJECT
+
+      - name: Run every script — no network allowed
+        run: |
+          python3 scripts/_python_check.py
+          python3 scripts/check_frontmatter.py
+          python3 scripts/check_residue.py
+          python3 scripts/check_task_types.py
+          python3 scripts/update_contract_sha.py --check
+          python3 scripts/sync_wrappers.py --check
+          python3 hooks/session_start.py --dry-run
+          python3 hooks/session_start.py --check-integrity
+          python3 tools/sdlc_metrics/analyze.py adapters
+          python3 tools/sdlc_metrics/analyze.py analyze tools/sdlc_metrics/tests/fixtures/sample-phase3.jsonl --format json > /dev/null
+          python3 tools/sdlc_metrics/analyze.py budget-check tools/sdlc_metrics/tests/fixtures/sample-phase3.jsonl --format text > /dev/null
+          echo "✓ all scripts ran under airgap"

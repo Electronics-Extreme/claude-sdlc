@@ -1,0 +1,41 @@
+# Line ending normalization — enforces LF across platforms per NFR-PORT-LINEENDINGS-1.
+# Windows-specific launchers (.bat, .ps1) require CRLF.
+
+# Source and documentation — LF
+*.py        text eol=lf
+*.sh        text eol=lf
+*.md        text eol=lf
+*.yaml      text eol=lf
+*.yml       text eol=lf
+*.json      text eol=lf
+*.toml      text eol=lf
+*.mdc       text eol=lf
+*.mmd       text eol=lf
+*.dot       text eol=lf
+*.sha256    text eol=lf
+*.txt       text eol=lf
+LICENSE     text eol=lf
+VERSION     text eol=lf
+.gitignore  text eol=lf
+.gitattributes text eol=lf
+
+# Windows-only launchers — CRLF
+*.bat       text eol=crlf
+*.ps1       text eol=crlf
+*.cmd       text eol=crlf
+
+# Binaries — never modify
+*.png       binary
+*.jpg       binary
+*.jpeg      binary
+*.gif       binary
+*.ico       binary
+*.zip       binary
+*.tar.gz    binary
+*.tgz       binary
+*.pdf       binary
+*.woff      binary
+*.woff2     binary
+*.db        binary
+*.sqlite    binary
+*.sqlite3   binary

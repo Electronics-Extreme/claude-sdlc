@@ -1,0 +1,93 @@
+# config/budgets.yaml
+# Per-phase token + cost budgets. Used by `tools/sdlc-metrics/budgets.py` as the
+# optional 5th phase-sign-off gate (alongside typecheck/lint/tests/reconciliation).
+#
+# Initial values (v1): only `hard_cap` is enforced. p50/p95 will be calibrated
+# from observed runs; until then they serve as informational
+# targets only (informational=true below).
+#
+# Adopters override this file; the shipped values reflect THIS kit's own
+# dogfood budget.
+#
+
+version: 1
+informational: true   # flip to false when p50/p95 are calibrated from real data
+
+phases:
+  "01":   # requirements authoring
+    tokens:
+      p50: 15000
+      p95: 40000
+      hard_cap: 80000
+    cost_usd:
+      p50: 0.06
+      p95: 0.18
+      hard_cap: 0.40
+    cache_hit_rate:
+      target: 0.80
+      fail_below: 0.60
+
+  "02":   # design
+    tokens:
+      p50: 20000
+      p95: 55000
+      hard_cap: 100000
+    cost_usd:
+      p50: 0.10
+      p95: 0.28
+      hard_cap: 0.55
+    cache_hit_rate:
+      target: 0.85
+      fail_below: 0.65
+
+  "03":   # implementation (highest per-session cost)
+    tokens:
+      p50: 30000
+      p95: 80000
+      hard_cap: 150000
+    cost_usd:
+      p50: 0.15
+      p95: 0.40
+      hard_cap: 0.75
+    cache_hit_rate:
+      target: 0.85
+      fail_below: 0.70
+
+  "04":   # testing
+    tokens:
+      p50: 18000
+      p95: 50000
+      hard_cap: 90000
+    cost_usd:
+      p50: 0.08
+      p95: 0.22
+      hard_cap: 0.45
+    cache_hit_rate:
+      target: 0.85
+      fail_below: 0.70
+
+  "05":   # deployment prep
+    tokens:
+      p50: 10000
+      p95: 30000
+      hard_cap: 60000
+    cost_usd:
+      p50: 0.04
+      p95: 0.14
+      hard_cap: 0.30
+    cache_hit_rate:
+      target: 0.75
+      fail_below: 0.55
+
+  "06":   # maintenance / CR handling
+    tokens:
+      p50: 12000
+      p95: 35000
+      hard_cap: 70000
+    cost_usd:
+      p50: 0.05
+      p95: 0.16
+      hard_cap: 0.35
+    cache_hit_rate:
+      target: 0.80
+      fail_below: 0.60

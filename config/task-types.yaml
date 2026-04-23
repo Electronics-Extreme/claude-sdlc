@@ -1,0 +1,48 @@
+# config/task-types.yaml
+# CANONICAL task-type inventory per Core rule 8.
+#
+# Every reference to a task-type anywhere in the repo (SKILL.md, per-doc
+# `required_for` frontmatter, required-reads.md, controller prompts) MUST match
+# an entry here. Validated by `scripts/check_task_types.py` in CI.
+#
+# Schema: schemas/task-types.schema.yaml
+
+version: 1
+
+task_types:
+  phase-1-artifact-authoring:
+    purpose: "Authoring an artifact in docs/sdlc/01_requirement/ — srs, FRs, NFRs, UCs, ACs, glossary, stakeholders"
+    phase: "01"
+  phase-2-artifact-authoring:
+    purpose: "Authoring an artifact in docs/sdlc/02_design/ — architecture, data_model, api_design, trade_offs, ui_design, sequence_diagrams, database_design"
+    phase: "02"
+  phase-3-slice:
+    purpose: "Implementing a TO-### slice via TDD in Phase 3 (failing test first, minimum code, refactor)"
+    phase: "03"
+  phase-3-refactor:
+    purpose: "Refactoring existing code under TDD without behavior change"
+    phase: "03"
+  phase-4-test-authoring:
+    purpose: "Writing test_cases.md entries or test implementations"
+    phase: "04"
+  phase-4-test-execution:
+    purpose: "Running the test suite, parsing results, updating test_report.md / defect_log.md"
+    phase: "04"
+  phase-5-deploy-prep:
+    purpose: "Authoring deployment_plan, rollback_plan, runbook, release_notes, smoke_tests, go_live_checklist"
+    phase: "05"
+  phase-5-release-cutting:
+    purpose: "Cutting a release tag — bump VERSION, promote CHANGELOG [Unreleased], tag, run release workflow"
+    phase: "05"
+  phase-6-CR-authoring:
+    purpose: "Drafting a CR in docs/sdlc/06_maintenance/change_requests.md; discuss before code"
+    phase: "06"
+  phase-6-CR-implementation:
+    purpose: "Executing an approved CR — amending docs first (01/02/03), then implementing per TO-###"
+    phase: "06"
+  phase-6-incident-response:
+    purpose: "Responding to a live incident — log → diagnose → hotfix (with post-hoc reconciliation) → postmortem"
+    phase: "06"
+  phase-6-routine-maintenance:
+    purpose: "Routine ops work — monitoring, SLA/SLO tracking, dependency updates, security patches"
+    phase: "06"

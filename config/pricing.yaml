@@ -1,0 +1,38 @@
+# config/pricing.yaml
+# Canonical price table per Core rule 8 (code/config is canonical for enums).
+# Docs that reference model costs point here, do not duplicate values.
+# Schema: config/pricing.schema.yaml (same shape as below, validated on load).
+#
+
+version: 1
+currency: USD
+unit: per_million_tokens
+last_synced: 2026-04-23
+
+models:
+  claude-opus-4-7:
+    input: 15.00
+    output: 75.00
+    cache_read: 1.50
+    cache_create: 18.75
+    tier_hint: capable
+  claude-sonnet-4-6:
+    input: 3.00
+    output: 15.00
+    cache_read: 0.30
+    cache_create: 3.75
+    tier_hint: standard
+  claude-haiku-4-5-20251001:
+    input: 1.00
+    output: 5.00
+    cache_read: 0.10
+    cache_create: 1.25
+    tier_hint: cheap
+
+# When analyzing a session whose transcript references a model not listed here,
+# `tools/sdlc-metrics/pricing.py` raises PricingMissingError (FR-METRICS-012).
+# Fix by (a) updating this file if the model is real, or (b) running
+# `scripts/pricing_sync.py` which refreshes from Anthropic's public price page.
+#
+# Adopters with their own vendor choices (OpenAI, Gemini) extend this file.
+# Tier assignment follows docs/VERSIONING.md tier boundaries.

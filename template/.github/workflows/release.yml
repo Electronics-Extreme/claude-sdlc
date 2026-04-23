@@ -1,0 +1,58 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+
+jobs:
+  release:
+    name: Build + publish dist
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Verify tag matches VERSION
+        run: |
+          tag="${GITHUB_REF#refs/tags/v}"
+          file_ver="$(cat VERSION | tr -d '[:space:]')"
+          if [ "$tag" != "$file_ver" ]; then
+            echo "::error::tag v$tag != VERSION file contents ($file_ver)"
+            exit 1
+          fi
+          echo "✓ tag v$tag matches VERSION"
+
+      - name: Run release-check
+        run: python3 scripts/release_check.py --tag "$GITHUB_REF_NAME"
+
+      - name: Build dist.zip
+        run: python3 scripts/build_archive.py
+
+      - name: Extract CHANGELOG section for this version
+        id: changelog
+        run: |
+          tag="${GITHUB_REF#refs/tags/}"
+          version="${tag#v}"
+          awk -v v="$version" '
+            /^## \[/ {
+              if (hit) exit;
+              if ($0 ~ "\\[" v "\\]") { hit=1; next }
+            }
+            hit { print }
+          ' CHANGELOG.md > /tmp/release-notes.md
+          echo "release-notes=/tmp/release-notes.md" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          body_path: ${{ steps.changelog.outputs.release-notes }}
+          files: |
+            dist.zip

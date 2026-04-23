@@ -1,0 +1,6 @@
+{
+  "name": "sdlc-strict-waterfall",
+  "description": "Strict waterfall SDLC methodology — doc-first, TDD inside slices, two-pass reconciliation gate, five-bucket triage, CR-driven changes",
+  "version": "2.0.0",
+  "contextFileName": "GEMINI.md"
+}

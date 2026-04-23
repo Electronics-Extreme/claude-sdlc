@@ -1,0 +1,92 @@
+# schemas/doc-frontmatter.schema.yaml
+# Formal schema for the YAML frontmatter block required on every phase doc
+# per NFR-DOC-HYGIENE-1.
+#
+# Used by `scripts/check_frontmatter.py` in CI.
+
+$schema: "https://json-schema.org/draft-07/schema#"
+$id: "https://claude-sdlc.local/schemas/doc-frontmatter-v1.yaml"
+title: "Phase-doc YAML frontmatter"
+description: |
+  Schema for the doc lifecycle frontmatter. Phase docs, skill docs, policy
+  docs, and config docs all use this block to declare lifecycle state.
+
+  Files that are ALSO Claude Code skills (currently only `skill/SKILL.md`)
+  additionally carry `name` and `description` fields for Claude Code's skill
+  loader. These are permitted but optional in this schema — unrelated to
+  lifecycle enforcement.
+type: object
+required: [doc, status]
+additionalProperties: false
+
+properties:
+  doc:
+    type: string
+    description: "Canonical path from repo root."
+    pattern: "^(docs/sdlc/0[1-6]_[a-z_]+|config|docs|hooks|schemas|scripts|skill|template|tools)/.+\\.(md|yaml|yml)$|^(README|CHANGELOG|PRIVACY|NOTICE|LICENSE|VERSION|CLAUDE|AGENTS|GEMINI)\\.md$|^\\.[a-z]+\\.(yaml|yml|json)$"
+
+  status:
+    type: string
+    enum: [template, draft, signed, amended, deprecated]
+    description: |
+      State in the doc lifecycle:
+        template   — scaffold with {{PLACEHOLDER}} content; not authoritative
+        draft      — being written; partial
+        signed     — authoritative; frozen per Core rule 6
+        amended    — signed + one or more Post-vX.Y.Z amendments
+        deprecated — superseded; read-only; points at successor
+
+  signed_by:
+    type: string
+    pattern: "^.+ on \\d{4}-\\d{2}-\\d{2}$"
+    description: |
+      Sign-off line. Required when status in {signed, amended, deprecated}.
+      Format: "<Name> on YYYY-MM-DD"
+
+  amended:
+    type: array
+    description: "Amendment history when status = amended. One entry per Post-vX.Y.Z section."
+    items:
+      type: object
+      required: [date, cr]
+      additionalProperties: false
+      properties:
+        date: { type: string, pattern: "^\\d{4}-\\d{2}-\\d{2}$" }
+        cr:   { type: string, pattern: "^CR-\\d{4}-\\d{3}[A-Z]?$" }
+        note: { type: string, maxLength: 200 }
+
+  deprecated_on:
+    type: string
+    pattern: "^\\d{4}-\\d{2}-\\d{2}$"
+    description: "Required when status = deprecated."
+
+  superseded_by:
+    type: string
+    description: "Canonical path of the successor doc. Required when status = deprecated."
+
+  required_for:
+    type: array
+    description: "Task-types that MUST read this doc. Values must match config/task-types.yaml."
+    items:
+      type: string
+      # Cross-reference enum populated at validate time from config/task-types.yaml.
+      # JSON Schema itself can't enforce this dynamically; check_frontmatter.py
+      # loads task-types.yaml and validates membership.
+
+  cite_as:
+    type: string
+    maxLength: 8
+    pattern: "^[A-Z][A-Z0-9-]*$"
+    description: "Short abbreviation used in citations (e.g. CS, MB, AC, CR, PRIV, NOTICE, VER)."
+
+  # --- Claude Code skill loader fields (optional; only set on files that are
+  # ALSO Claude Code skills — currently only skill/SKILL.md). These are read by
+  # Claude's skill tool to discover and activate the skill; they are not part
+  # of the lifecycle enforcement and are NOT validated by
+  # scripts/check_frontmatter.py beyond being permitted. ---
+  name:
+    type: string
+    description: "Claude Code skill identifier (e.g. 'sdlc-strict-waterfall'). Required by Claude's skill loader on SKILL.md files."
+  description:
+    type: string
+    description: "Claude Code skill activation trigger. A short paragraph Claude reads to decide when to activate this skill."
