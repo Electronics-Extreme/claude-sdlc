@@ -13,6 +13,12 @@ adapter: `.codex/INSTALL.md`.
 
 ## Quick summary
 
+### Option 1: Codex plugin discovery (recommended)
+
+Clone this repo, then in Codex run `/plugins`, search "SDLC", and install.
+
+### Option 2: Manual symlink
+
 1. Clone the kit: `git clone … ~/.codex/sdlc-kit`
 2. Symlink skills: `ln -s ~/.codex/sdlc-kit/skill ~/.agents/skills/sdlc-strict-waterfall`
 3. Restart Codex.

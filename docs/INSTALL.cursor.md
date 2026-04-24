@@ -31,6 +31,14 @@ Cursor Agent uses **Layer 1** — a plugin with a SessionStart hook
 
 ## Install
 
+### Option 1: npx skills (recommended)
+
+```bash
+npx skills add Electronics-Extreme/claude-sdlc -a cursor
+```
+
+### Option 2: Manual bootstrap
+
 1. Bootstrap the kit into your project (if not already present):
 
    ```bash

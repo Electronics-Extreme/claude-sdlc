@@ -3,7 +3,6 @@
 const { program } = require('commander');
 const fs = require('fs');
 const path = require('path');
-const readline = require('readline');
 const { bootstrap, HARNESS_CHOICES } = require('./bootstrap.js');
 
 const packageJson = require('../package.json');
@@ -15,28 +14,17 @@ program
   .version(packageJson.version);
 
 program
-  .command('init <dir>')
+  .command('init')
   .description('Initialize a new SDLC project in the target directory')
   .option('-f, --force', 'Overlay non-empty directory without prompting')
+  .option('--dir <path>', 'Target directory (default: current directory)', '.')
   .option(
     '--harness <name>',
     `Harness wrapper(s) to install. One of: ${HARNESS_CHOICES.join(', ')}`,
     'all',
   )
-  .action(async (dir, options) => {
-    const targetDir = path.resolve(dir);
-
-    if (fs.existsSync(targetDir) && fs.readdirSync(targetDir).length > 0 && !options.force) {
-      const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
-      const answer = await new Promise((resolve) => {
-        rl.question(`Target ${targetDir} is not empty. Overlay anyway? [y/N] `, resolve);
-      });
-      rl.close();
-      if (!/^y(es)?$/i.test(answer)) {
-        console.error('aborted.');
-        process.exit(1);
-      }
-    }
+  .action(async (options) => {
+    const targetDir = path.resolve(options.dir);
 
     try {
       const result = bootstrap({

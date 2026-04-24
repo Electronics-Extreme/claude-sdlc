@@ -21,6 +21,14 @@ at runtime. Field-tested: a single plugin manifest serves both harnesses.
 
 ## Install
 
+### Option 1: npx skills (recommended)
+
+```bash
+npx skills add Electronics-Extreme/claude-sdlc -a github-copilot
+```
+
+### Option 2: Manual plugin install
+
 Add the project's plugin manifest to Copilot CLI:
 
 ```bash

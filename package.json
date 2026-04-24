@@ -1,5 +1,5 @@
 {
-  "name": "claude-sdlc",
+  "name": "@electronics-extreme/claude-sdlc",
   "version": "2.0.0",
   "description": "Cross-platform CLI to bootstrap a frozen Waterfall SDLC scaffold for Claude Code / Cursor / Codex / Gemini / Copilot CLI / OpenCode. Runtime requires Python 3.11+.",
   "keywords": ["sdlc", "waterfall", "bootstrap", "claude-code", "cursor", "codex", "gemini", "copilot-cli", "opencode"],
@@ -14,9 +14,23 @@
   "bin": {
     "claude-sdlc": "./src/cli.js"
   },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "files": [
     "src",
     "template",
+    ".claude-plugin",
+    ".cursor",
+    ".windsurf",
+    ".clinerules",
+    ".github",
+    ".codex",
+    "gemini-extension.json",
+    "skills",
+    "AGENTS.md",
+    "GEMINI.md",
     "README.md",
     "LICENSE",
     "NOTICE.md",

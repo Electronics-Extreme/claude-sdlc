@@ -20,6 +20,14 @@ integrates via Gemini's extension mechanism + `contextFileName` pointer to
 
 ## Install
 
+### Option 1: Gemini extension (recommended)
+
+```bash
+gemini extensions install https://github.com/Electronics-Extreme/claude-sdlc
+```
+
+### Option 2: Manual bootstrap
+
 ```bash
 cd /path/to/your-project
 gemini extensions install .
