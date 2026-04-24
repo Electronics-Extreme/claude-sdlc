@@ -51,10 +51,17 @@ Install once. Use in every session. On first interaction, the agent loads the SD
 
 ## Manual bootstrap (alternative)
 
+No agent install needed — use the CLI directly.
+
 ```bash
-# Run inside your project directory — no arguments needed
+# Option A — npx (no global install)
 cd ~/Projects/MyApp
 npx @electronics-extreme/claude-sdlc init --harness claude
+
+# Option B — global install (shorter command)
+npm install -g @electronics-extreme/claude-sdlc
+cd ~/Projects/MyApp
+claude-sdlc init --harness claude
 ```
 
 ## The methodology

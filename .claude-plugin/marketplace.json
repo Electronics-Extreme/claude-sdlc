@@ -1,0 +1,17 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "claude-sdlc",
+  "description": "Strict waterfall SDLC methodology for AI coding agents. Doc-first, TDD inside slices, two-pass reconciliation gate, CR-driven changes.",
+  "owner": {
+    "name": "Electronics Extreme",
+    "url": "https://github.com/Electronics-Extreme"
+  },
+  "plugins": [
+    {
+      "name": "claude-sdlc",
+      "description": "Bootstrap a 6-phase waterfall SDLC scaffold with enforced rules and reconciliation gates.",
+      "source": "./",
+      "category": "productivity"
+    }
+  ]
+}

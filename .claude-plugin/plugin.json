@@ -3,7 +3,7 @@
   "description": "Strict waterfall SDLC methodology — doc-first, TDD inside slices, two-pass reconciliation gate, CR-driven changes.",
   "version": "2.0.0",
   "author": {
-    "name": "AI Project Setup",
+    "name": "Electronics Extreme",
     "url": "https://github.com/Electronics-Extreme"
   },
   "homepage": "https://github.com/Electronics-Extreme/claude-sdlc",
