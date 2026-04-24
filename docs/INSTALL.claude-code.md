@@ -21,7 +21,16 @@ claude.ai/code (web).
 
 ## Install
 
-### Option A: bootstrap a new project from the kit
+### Option 1: Claude Code plugin (recommended)
+
+```bash
+claude plugin marketplace add Electronics-Extreme/claude-sdlc
+claude plugin install claude-sdlc@claude-sdlc
+```
+
+### Option 2: Manual bootstrap
+
+#### Option A: bootstrap a new project from the kit
 
 ```bash
 ./bootstrap.sh ~/WorkSpace/MyNewProject --harness claude
