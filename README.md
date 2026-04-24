@@ -24,36 +24,38 @@ metrics subsystem (`tools/sdlc_metrics/`) reports token cost per phase; a
 residue guard refuses to sign docs with placeholder content; a SHA-pinned hook
 script refuses to inject a tampered contract.
 
-## Quick start
+## Install
+
+Pick your agent. One command. Done.
+
+| Agent | Install |
+|---|---|
+| **Claude Code** | `claude plugin marketplace add Electronics-Extreme/claude-sdlc && claude plugin install claude-sdlc@claude-sdlc` |
+| **Codex** | Clone repo → `/plugins` → Search "SDLC" → Install |
+| **Gemini CLI** | `gemini extensions install https://github.com/Electronics-Extreme/claude-sdlc` |
+| **Cursor** | `npx skills add Electronics-Extreme/claude-sdlc -a cursor` |
+| **Windsurf** | `npx skills add Electronics-Extreme/claude-sdlc -a windsurf` |
+| **Copilot** | `npx skills add Electronics-Extreme/claude-sdlc -a github-copilot` |
+| **Cline** | `npx skills add Electronics-Extreme/claude-sdlc -a cline` |
+| **Any other** | `npx skills add Electronics-Extreme/claude-sdlc` |
+
+Install once. Use in every session. On first interaction, the agent loads the SDLC contract, detects a missing scaffold, and offers to bootstrap.
+
+## Quick start (after install)
+
+1. Open your project in the agent
+2. Ask: "What are the 5 non-negotiable rules?"
+3. Agent loads SDLC contract → detects no scaffold → offers bootstrap
+4. Accept → `docs/sdlc/01_requirement/` ... `06_maintenance/` created
+5. Start spec in `docs/sdlc/01_requirement/srs.md`
+
+## Manual bootstrap (alternative)
 
 ```bash
-# Prerequisites: Python 3.11+ (runtime). Node.js ≥18 only if using npm/npx.
-
-# Option 1 — npx (no install, after publish)
-npx claude-sdlc init ~/Projects/MyProject --harness claude
-
-# Option 2 — npm global
-npm install -g claude-sdlc
-claude-sdlc init ~/Projects/MyProject --harness claude
-
-# Option 3 — shell bootstrap (after git clone)
-./bootstrap.sh ~/Projects/MyProject --harness claude        # Unix / macOS
-bootstrap.bat C:\Projects\MyProject --harness claude        # Windows cmd
-.\bootstrap.ps1 C:\Projects\MyProject --harness claude      # PowerShell
-
-# Then
-cd ~/Projects/MyProject
-# Start your AI agent (claude, cursor, codex, gemini, copilot, opencode).
-# The SessionStart hook auto-loads the contract.
+# Run inside your project directory — no arguments needed
+cd ~/Projects/MyApp
+npx @electronics-extreme/claude-sdlc init --harness claude
 ```
-
-Available harness values: `claude` · `cursor` · `codex` · `gemini` ·
-`copilot` · `opencode` · `all` (default).
-
-Per-harness install detail: `docs/INSTALL.claude-code.md`,
-`docs/INSTALL.cursor.md`, `docs/INSTALL.gemini.md`, `docs/INSTALL.codex.md`,
-`docs/INSTALL.copilot.md`, `docs/INSTALL.opencode.md`.
-npm CLI: `docs/INSTALL.npm.md`. Windows setup: `docs/INSTALL.windows.md`.
 
 ## The methodology
 
@@ -98,7 +100,7 @@ Core rules 1-10, per-phase workflows, and protocols.
 | Metrics subsystem | `tools/sdlc_metrics/` — phase-aware token analyzer with 6 adapter stubs, 4 report formats (text/JSON/markdown/HTML), SQLite history, budget gate, secrets pre-filter |
 | Config | `config/pricing.yaml`, `budgets.yaml`, `phase-markers.yaml`, `task-types.yaml`, `harnesses.yaml`, `residue-exceptions.yaml` |
 | Schemas | `schemas/doc-frontmatter.schema.yaml`, `task-types.schema.yaml` |
-| Harness adapters | `.claude/`, `.claude-plugin/`, `.cursor-plugin/`, `.codex/`, `.opencode/`, `gemini-extension.json`, `AGENTS.md`, `GEMINI.md` |
+| Harness adapters | `.claude/`, `.claude-plugin/`, `.cursor/`, `.windsurf/`, `.clinerules/`, `.github/copilot-instructions.md`, `.codex/`, `.opencode/`, `gemini-extension.json`, `AGENTS.md`, `GEMINI.md` |
 | Policy docs | `PRIVACY.md`, `NOTICE.md`, `LICENSE`, `CHANGELOG.md`, `docs/VERSIONING.md` |
 | CI workflows | `.github/workflows/sdlc-tests.yml`, `release.yml`, `airgap.yml` |
 
