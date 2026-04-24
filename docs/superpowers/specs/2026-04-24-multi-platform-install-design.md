@@ -11,11 +11,16 @@
 
 Enable one-command installation of the SDLC Strict Waterfall kit across 8+ AI agent platforms. After install, the loaded skill/rule file detects a missing SDLC scaffold in the current project and offers to bootstrap it.
 
+Additional requirements:
+1. **CLI default directory change:** `claude-sdlc init` uses current directory (`.`) as default. Optional `--dir <path>` overrides. Positional `<dir>` argument removed.
+2. **npm publish setup:** Package published as `@electronics-extreme/claude-sdlc` on npmjs.com.
+
 ## 2. Non-Goal
 
-- Replace `npx claude-sdlc init` as the primary bootstrap mechanism
+- Replace `npx @electronics-extreme/claude-sdlc init` as the primary bootstrap mechanism
 - Support agent platforms not listed below
 - Auto-scaffold without user confirmation
+- Change core SDLC rules or template content
 
 ## 3. Architecture
 
@@ -30,7 +35,7 @@ Enable one-command installation of the SDLC Strict Waterfall kit across 8+ AI ag
 | **Repo root** | `.claude-plugin/`, `.cursor/`, `.windsurf/`, `.clinerules/`, `.github/`, `.codex/`, `gemini-extension.json`, `skills/` | Consumed by install commands. Copied into agent config or global plugin store. |
 | **Template** | `template/` | Consumed by `claude-sdlc init` or the bootstrap guard. Copied into the adopter's project. |
 
-Root-level files must be **self-contained** or reference the repo via `git clone` / `npx claude-sdlc init`. They do not assume access to `template/`.
+Root-level files must be **self-contained** or reference the repo via `git clone` / `npx @electronics-extreme/claude-sdlc init`. They do not assume access to `template/`.
 
 ### 3.3 Exception: Claude Code plugin
 
@@ -118,7 +123,7 @@ If current project lacks `docs/sdlc/01_requirement/`:
 1. Inform user: "SDLC scaffold not detected in this project."
 2. Offer: "Shall I bootstrap the SDLC structure here?"
 3. If yes, run ONE of:
-   - Node available → `npx claude-sdlc init . --harness <detected>`
+   - Node available → `npx @electronics-extreme/claude-sdlc init --harness <detected>`
    - No Node → `git clone https://github.com/Electronics-Extreme/claude-sdlc /tmp/sdlc-kit && /tmp/sdlc-kit/bootstrap.sh . --harness <detected>`
 4. After bootstrap, instruct user to restart agent session for hooks to register.
 ```
@@ -218,7 +223,32 @@ description: Strict waterfall SDLC methodology — doc-first, TDD inside slices,
 [Same guard as Section 6.1]
 ```
 
-## 7. README Updates
+## 7. CLI Changes
+
+### 7.1 Default directory
+
+`init` command no longer requires a positional `<dir>` argument.
+
+```bash
+# New — uses current directory
+npx @electronics-extreme/claude-sdlc init
+npx @electronics-extreme/claude-sdlc init --harness cursor
+
+# Override directory
+npx @electronics-extreme/claude-sdlc init --dir ~/Projects/MyApp --harness claude
+```
+
+Implementation:
+- `program.command('init [dir]')` → `program.command('init')`
+- Add `.option('--dir <path>', 'Target directory (default: .)')`
+- Default `targetDir = path.resolve(options.dir || '.')`
+- Remove interactive prompt for empty directory — `cwd` is expected to be the project root
+
+### 7.2 Backward compatibility
+
+Positional argument form `claude-sdlc init <dir>` removed. This is acceptable because the package name is changing to `@electronics-extreme/claude-sdlc`, so existing users will already need to update their install command.
+
+## 8. README Updates
 
 Replace the current "Quick start" section with:
 
@@ -251,17 +281,70 @@ Install once. Use in every session. On first interaction, the agent loads the SD
 ## Manual bootstrap (alternative)
 
 ```bash
-npx claude-sdlc init . --harness claude
+npx @electronics-extreme/claude-sdlc init --harness claude
 ```
 ```
 
 Per-harness detail docs stay in `docs/INSTALL.*.md` but are demoted to "Option 2" or "Troubleshooting."
 
-## 8. Package.json
+## 9. Package.json & npm Publish Setup
 
-No changes required. `npx skills add` does not read `package.json`. The npm package name (`claude-sdlc`) and CLI behavior stay unchanged.
+### 9.1 Package name change
 
-## 9. Verification Plan
+```json
+{
+  "name": "@electronics-extreme/claude-sdlc",
+  "version": "2.0.0",
+  ...
+}
+```
+
+### 9.2 Publish config
+
+Add to `package.json`:
+
+```json
+{
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
+}
+```
+
+### 9.3 Required npm setup
+
+- `npm login` with Electronics-Extreme org credentials
+- Organization `@electronics-extreme` must exist on npmjs.com (or user must create it)
+- First publish: `npm publish --access public`
+- Subsequent publishes: `npm publish`
+
+### 9.4 Files array
+
+Ensure `package.json` `files` array includes all root-level harness adapters:
+
+```json
+"files": [
+  "src",
+  "template",
+  ".claude-plugin",
+  ".cursor",
+  ".windsurf",
+  ".clinerules",
+  ".github",
+  ".codex",
+  "gemini-extension.json",
+  "skills",
+  "AGENTS.md",
+  "GEMINI.md",
+  "README.md",
+  "LICENSE",
+  "NOTICE.md",
+  "VERSION"
+]
+```
+
+## 10. Verification Plan
 
 | Check | How |
 |---|---|
@@ -273,7 +356,11 @@ No changes required. `npx skills add` does not read `package.json`. The npm pack
 | Bootstrap guard present in all rule files | Grep for "Bootstrap Guard" |
 | README install table complete | Visual check |
 | `npx skills add` simulation | Clone repo, run `npx skills add . -a cursor --dry-run` if available |
+| CLI `init` without positional arg works | `node src/cli.js init --harness claude` in temp dir |
+| CLI `--dir` override works | `node src/cli.js init --dir /tmp/test --harness claude` |
+| `package.json` name is scoped | `cat package.json \| grep '"name"'` |
+| `npm pack` includes harness adapters | `npm pack --dry-run` lists `.claude-plugin/`, `.cursor/`, etc. |
 
-## 10. Open Questions
+## 11. Open Questions
 
 None — all sections approved by user.
