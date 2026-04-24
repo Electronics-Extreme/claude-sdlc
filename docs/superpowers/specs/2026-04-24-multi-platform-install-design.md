@@ -124,7 +124,7 @@ If current project lacks `docs/sdlc/01_requirement/`:
 2. Offer: "Shall I bootstrap the SDLC structure here?"
 3. If yes, run ONE of:
    - Node available → `npx @electronics-extreme/claude-sdlc init --harness <detected>`
-   - No Node → `git clone https://github.com/Electronics-Extreme/claude-sdlc /tmp/sdlc-kit && /tmp/sdlc-kit/bootstrap.sh . --harness <detected>`
+   - No Node → `git clone https://github.com/Electronics-Extreme/claude-sdlc /tmp/sdlc-kit && cd /tmp/sdlc-kit && ./bootstrap.sh --harness <detected>`
 4. After bootstrap, instruct user to restart agent session for hooks to register.
 ```
 
@@ -227,20 +227,20 @@ description: Strict waterfall SDLC methodology — doc-first, TDD inside slices,
 
 ### 7.1 Default directory
 
-`init` command no longer requires a positional `<dir>` argument.
+`init` command no longer requires a positional `<dir>` argument. Default is current directory.
 
 ```bash
-# New — uses current directory
+# Just run this in your project root — scaffolds into current directory
 npx @electronics-extreme/claude-sdlc init
 npx @electronics-extreme/claude-sdlc init --harness cursor
 
-# Override directory
+# Override directory (rarely needed)
 npx @electronics-extreme/claude-sdlc init --dir ~/Projects/MyApp --harness claude
 ```
 
 Implementation:
 - `program.command('init [dir]')` → `program.command('init')`
-- Add `.option('--dir <path>', 'Target directory (default: .)')`
+- Add `.option('--dir <path>', 'Target directory (default: current directory)')`
 - Default `targetDir = path.resolve(options.dir || '.')`
 - Remove interactive prompt for empty directory — `cwd` is expected to be the project root
 
@@ -281,6 +281,8 @@ Install once. Use in every session. On first interaction, the agent loads the SD
 ## Manual bootstrap (alternative)
 
 ```bash
+# Run inside your project directory — no arguments needed
+cd ~/Projects/MyApp
 npx @electronics-extreme/claude-sdlc init --harness claude
 ```
 ```
