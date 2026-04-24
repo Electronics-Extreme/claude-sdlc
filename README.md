@@ -70,9 +70,12 @@ Six phases, strictly ordered. No phase skips. Every phase gates on four checks
 plus two-pass reconciliation before sign-off:
 
 ```
-docs/sdlc/01_requirement  →  docs/sdlc/02_design  →  docs/sdlc/03_implementation  →  docs/sdlc/04_testing  →  docs/sdlc/05_deployment  →  docs/sdlc/06_maintenance
-     SRS            Architecture      Source code        Test report      Release         Change requests
-   signed off     + DB + API         + unit tests      + defects log     + runbook     + incident log
+   +------------------+      +------------------+      +------------------+      +------------------+      +------------------+      +------------------+
+   | 01_requirement   |  →   | 02_design        |  →   | 03_implementation|  →   | 04_testing       |  →   | 05_deployment    |  →   | 06_maintenance   |
+   |                  |      |                  |      |                  |      |                  |      |                  |      |                  |
+   | SRS              |      | Architecture     |      | Source code      |      | Test report      |      | Release          |      | Change requests  |
+   | signed off       |      | + DB + API       |      | + unit tests     |      | + defects log    |      | + runbook        |      | + incident log   |
+   +------------------+      +------------------+      +------------------+      +------------------+      +------------------+      +------------------+
 ```
 
 **Five non-negotiable rules** (always-loaded via SessionStart hook):
